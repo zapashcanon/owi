@@ -8,6 +8,8 @@ let () = Random.init 42
 
 let debug = false
 
+let (let*/) = Concolic_choice.bind
+
 let symbolic_extern_module :
   Concolic.P.Extern_func.extern_func Link.extern_module =
   let symbol_i32 () : Value.int32 Choice.t =
@@ -107,7 +109,7 @@ let symbolic_extern_module :
   in
   { functions }
 
-let summaries_extern_module :
+let summaries_extern_module memory :
   Concolic.P.Extern_func.extern_func Link.extern_module =
   let open Expr in
   let i32 (v : Value.int32) =
@@ -127,8 +129,12 @@ let summaries_extern_module :
       Log.err {|free: cannot fetch pointer base of "%a"|} Expr.pp v.symbolic
   in
   let abort () : unit Choice.t = Choice.abort in
-  let alloc (base : Value.int32) (_size : Value.int32) : Value.int32 Choice.t =
+  let alloc (base : Value.int32) (size : Value.int32) : Value.int32 Choice.t =
     let base : int32 = i32 base in
+    let*/ memory : Concolic.P.Memory.t = Lazy.force memory in
+    Symbolic_memory.replace_size memory.symbolic base size.symbolic;
+    Concrete_memory.grow memory.concrete size.concrete;
+    (* TODO proper concrete version of that *)
     Choice.return
       { Concolic_value.concrete = base
       ; symbolic = Expr.make (Ptr (base, Symbolic_value.const_i32 0l))
@@ -195,34 +201,58 @@ let simplify_then_link ~unsafe ~optimize link_state (m : Text.modul) =
   (link_state, module_to_run)
 
 let simplify_then_link_files ~unsafe ~optimize filenames =
-  let link_state = Link.empty_state in
-  let link_state =
-    Link.extern_module' link_state ~name:"symbolic"
-      ~func_typ:Concolic.P.Extern_func.extern_type symbolic_extern_module
+  let rec result = lazy begin
+    let last_memory = lazy begin
+      let link_state : _ Link.state =
+        match Lazy.force result with
+        | Error _ -> assert false
+        | Ok (link_state, _) -> link_state
+      in
+      let last_env_id =
+        match link_state.last with
+        | None -> failwith "No last env"
+        | Some (_exports, env_id) -> env_id
+      in
+      let last_env = Env_id.get last_env_id link_state.envs in
+      Concolic.P.Env.get_memory last_env 0
+    end
+    in
+    let link_state = Link.empty_state in
+    let link_state =
+      Link.extern_module' link_state ~name:"symbolic"
+        ~func_typ:Concolic.P.Extern_func.extern_type symbolic_extern_module
+    in
+    let link_state =
+      Link.extern_module' link_state ~name:"summaries"
+        ~func_typ:Concolic.P.Extern_func.extern_type (summaries_extern_module last_memory)
+    in
+    let+ link_state, modules_to_run =
+      List.fold_left
+        (fun (acc : (_ * _) Result.t) filename ->
+           let* link_state, modules_to_run = acc in
+           let* m0dule = Parse.Module.from_file filename in
+           let+ link_state, module_to_run =
+             simplify_then_link ~unsafe ~optimize link_state m0dule
+           in
+           (link_state, module_to_run :: modules_to_run) )
+        (Ok (link_state, []))
+        filenames
+    in
+    (link_state, List.rev modules_to_run)
+  end
   in
-  let link_state =
-    Link.extern_module' link_state ~name:"summaries"
-      ~func_typ:Concolic.P.Extern_func.extern_type summaries_extern_module
-  in
-  let+ link_state, modules_to_run =
-    List.fold_left
-      (fun (acc : (_ * _) Result.t) filename ->
-        let* link_state, modules_to_run = acc in
-        let* m0dule = Parse.Module.from_file filename in
-        let+ link_state, module_to_run =
-          simplify_then_link ~unsafe ~optimize link_state m0dule
-        in
-        (link_state, module_to_run :: modules_to_run) )
-      (Ok (link_state, []))
-      filenames
-  in
-  (link_state, List.rev modules_to_run)
+  Lazy.force result
 
 let run_modules_to_run (link_state : _ Link.state) modules_to_run =
+  (* TODO XXX fix this copy: if there are sharing between environments, this is lost by this copy ! *)
+  let envs = Env_id.map Link_env.clone link_state.envs in
   List.fold_left
-    (fun (acc : unit Result.t Concolic.P.Choice.t) to_run ->
-      let** () = acc in
-      (Interpret.Concolic.modul link_state.envs) to_run )
+    (fun (acc : unit Result.t Concolic.P.Choice.t) (to_run : Concolic.P.Module_to_run.t) ->
+       let** () = acc in
+       let to_run : Concolic.P.Module_to_run.t =
+         { to_run with env = Env_id.get (Link_env.id to_run.env) envs }
+       in
+      (Interpret.Concolic.modul envs) to_run )
     (Choice.return (Ok ())) modules_to_run
 
 let get_model (* ~symbols *) solver pc =

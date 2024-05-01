@@ -14,6 +14,8 @@ type data = { mutable value : string }
 
 type func := Func_intf.t
 
+val clone : 'a t -> 'a t
+
 val get_memory : _ t -> int -> Concrete_memory.t
 
 val get_func : _ t -> int -> func

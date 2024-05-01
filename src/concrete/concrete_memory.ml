@@ -11,6 +11,8 @@ type t =
   ; mutable data : bytes
   }
 
+let clone t = { t with data = t.data }
+
 let init limits : t =
   let data = Bytes.make (page_size * limits.min) '\x00' in
   { limits; data }

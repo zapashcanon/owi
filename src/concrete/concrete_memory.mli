@@ -44,3 +44,5 @@ val blit_string : t -> string -> src:int32 -> dst:int32 -> len:int32 -> bool
 val size_in_pages : t -> int32
 
 val size : t -> int32
+
+val clone : t -> t

@@ -20,3 +20,5 @@ val set_value : t -> Concrete_value.t -> unit
 val typ : t -> binary val_type
 
 val mut : t -> mut
+
+val clone : t -> t

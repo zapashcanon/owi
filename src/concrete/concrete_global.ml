@@ -18,3 +18,5 @@ let set_value g v = g.value <- v
 let mut g = g.mut
 
 let typ g = g.typ
+
+let clone g = { g with mut = g.mut }

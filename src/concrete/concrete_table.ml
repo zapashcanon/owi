@@ -15,6 +15,8 @@ type t =
   ; mutable data : table
   }
 
+let clone t = { t with id = t.id }
+
 let fresh =
   let r = ref (-1) in
   fun () ->
