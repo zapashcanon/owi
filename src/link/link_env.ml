@@ -30,15 +30,17 @@ type 'ext t =
   }
 
 let clone_data (t : data) : data = { value = t.value }
+
 let clone_elem (t : elem) : elem = { value = Array.copy t.value }
 
 let clone t =
   { t with
-    globals = IMap.map Concrete_global.clone t.globals;
-    memories = IMap.map Concrete_memory.clone t.memories;
-    tables = IMap.map Concrete_table.clone t.tables;
-    data = IMap.map clone_data t.data;
-    elem = IMap.map clone_elem t.elem; }
+    globals = IMap.map Concrete_global.clone t.globals
+  ; memories = IMap.map Concrete_memory.clone t.memories
+  ; tables = IMap.map Concrete_table.clone t.tables
+  ; data = IMap.map clone_data t.data
+  ; elem = IMap.map clone_elem t.elem
+  }
 
 let id (env : _ t) = env.id
 

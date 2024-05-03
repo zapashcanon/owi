@@ -6,9 +6,9 @@ module Choice = Concolic.P.Choice
 (* let () = Random.self_init () *)
 let () = Random.init 42
 
-let debug = false
+let debug = true
 
-let (let*/) = Concolic_choice.bind
+let ( let*/ ) = Concolic_choice.bind
 
 let symbolic_extern_module :
   Concolic.P.Extern_func.extern_func Link.extern_module =
@@ -131,7 +131,7 @@ let summaries_extern_module memory :
   let abort () : unit Choice.t = Choice.abort in
   let alloc (base : Value.int32) (size : Value.int32) : Value.int32 Choice.t =
     let base : int32 = i32 base in
-    let*/ memory : Concolic.P.Memory.t = Lazy.force memory in
+    let*/ (memory : Concolic.P.Memory.t) = Lazy.force memory in
     Symbolic_memory.replace_size memory.symbolic base size.symbolic;
     Concrete_memory.grow memory.concrete size.concrete;
     (* TODO proper concrete version of that *)
@@ -201,45 +201,50 @@ let simplify_then_link ~unsafe ~optimize link_state (m : Text.modul) =
   (link_state, module_to_run)
 
 let simplify_then_link_files ~unsafe ~optimize filenames =
-  let rec result = lazy begin
-    let last_memory = lazy begin
-      let link_state : _ Link.state =
-        match Lazy.force result with
-        | Error _ -> assert false
-        | Ok (link_state, _) -> link_state
-      in
-      let last_env_id =
-        match link_state.last with
-        | None -> failwith "No last env"
-        | Some (_exports, env_id) -> env_id
-      in
-      let last_env = Env_id.get last_env_id link_state.envs in
-      Concolic.P.Env.get_memory last_env 0
-    end
-    in
-    let link_state = Link.empty_state in
-    let link_state =
-      Link.extern_module' link_state ~name:"symbolic"
-        ~func_typ:Concolic.P.Extern_func.extern_type symbolic_extern_module
-    in
-    let link_state =
-      Link.extern_module' link_state ~name:"summaries"
-        ~func_typ:Concolic.P.Extern_func.extern_type (summaries_extern_module last_memory)
-    in
-    let+ link_state, modules_to_run =
-      List.fold_left
-        (fun (acc : (_ * _) Result.t) filename ->
-           let* link_state, modules_to_run = acc in
-           let* m0dule = Parse.Module.from_file filename in
-           let+ link_state, module_to_run =
-             simplify_then_link ~unsafe ~optimize link_state m0dule
-           in
-           (link_state, module_to_run :: modules_to_run) )
-        (Ok (link_state, []))
-        filenames
-    in
-    (link_state, List.rev modules_to_run)
-  end
+  let rec result =
+    lazy
+      begin
+        let last_memory =
+          lazy
+            begin
+              let link_state : _ Link.state =
+                match Lazy.force result with
+                | Error _ -> assert false
+                | Ok (link_state, _) -> link_state
+              in
+              let last_env_id =
+                match link_state.last with
+                | None -> failwith "No last env"
+                | Some (_exports, env_id) -> env_id
+              in
+              let last_env = Env_id.get last_env_id link_state.envs in
+              Concolic.P.Env.get_memory last_env 0
+            end
+        in
+        let link_state = Link.empty_state in
+        let link_state =
+          Link.extern_module' link_state ~name:"symbolic"
+            ~func_typ:Concolic.P.Extern_func.extern_type symbolic_extern_module
+        in
+        let link_state =
+          Link.extern_module' link_state ~name:"summaries"
+            ~func_typ:Concolic.P.Extern_func.extern_type
+            (summaries_extern_module last_memory)
+        in
+        let+ link_state, modules_to_run =
+          List.fold_left
+            (fun (acc : (_ * _) Result.t) filename ->
+              let* link_state, modules_to_run = acc in
+              let* m0dule = Parse.Module.from_file filename in
+              let+ link_state, module_to_run =
+                simplify_then_link ~unsafe ~optimize link_state m0dule
+              in
+              (link_state, module_to_run :: modules_to_run) )
+            (Ok (link_state, []))
+            filenames
+        in
+        (link_state, List.rev modules_to_run)
+      end
   in
   Lazy.force result
 
@@ -247,11 +252,12 @@ let run_modules_to_run (link_state : _ Link.state) modules_to_run =
   (* TODO XXX fix this copy: if there are sharing between environments, this is lost by this copy ! *)
   let envs = Env_id.map Link_env.clone link_state.envs in
   List.fold_left
-    (fun (acc : unit Result.t Concolic.P.Choice.t) (to_run : Concolic.P.Module_to_run.t) ->
-       let** () = acc in
-       let to_run : Concolic.P.Module_to_run.t =
-         { to_run with env = Env_id.get (Link_env.id to_run.env) envs }
-       in
+    (fun (acc : unit Result.t Concolic.P.Choice.t)
+       (to_run : Concolic.P.Module_to_run.t) ->
+      let** () = acc in
+      let to_run : Concolic.P.Module_to_run.t =
+        { to_run with env = Env_id.get (Link_env.id to_run.env) envs }
+      in
       (Interpret.Concolic.modul envs) to_run )
     (Choice.return (Ok ())) modules_to_run
 
@@ -445,9 +451,15 @@ let rec find_node_to_run tree =
 
 let pc_model solver pc =
   let expr = Concolic_choice.pc_to_exprs pc in
+  let t0 = Unix.gettimeofday () in
   match Solver.Z3Batch.check solver expr with
-  | `Unsat | `Unknown -> None
+  | `Unsat | `Unknown ->
+    Stdlib.Format.printf "Unsat@.";
+    None
   | `Sat -> (
+    let t1 = Unix.gettimeofday () in
+    Stdlib.Format.printf "Sat: %g@." (t1 -. t0);
+    Stdlib.Format.printf "%a@.@." Smtml.Expr.pp_list expr;
     match Solver.Z3Batch.model solver with
     | None -> assert false
     | Some model -> Some model )
@@ -494,7 +506,13 @@ let launch solver tree link_state modules_to_run =
       | None ->
         Format.pp_err "Can't satisfy assume !@\n";
         loop (count - 1)
-      | Some model -> run_model (Some model) (count - 1)
+      | Some model ->
+        if debug then begin
+          Format.pp_std "Retry assume with %a@."
+            (fun ppf v -> Smtml.Model.pp ppf v)
+            model
+        end;
+        run_model (Some model) (count - 1)
     end
     | Error (Trap trap) -> Some (`Trap trap, thread)
     | Error Assert_fail -> Some (`Assert_fail, thread)

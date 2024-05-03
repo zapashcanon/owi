@@ -107,15 +107,20 @@ module T_pair (C : Value_intf.T) (S : Value_intf.T) = struct
 
   let pp ppf = function
     | I32 v ->
-      Stdlib.Format.fprintf ppf "@[<hov 1>{c: %a@ s: %a}@]" C.pp (I32 v.concrete) S.pp (I32 v.symbolic)
+      Stdlib.Format.fprintf ppf "@[<hov 1>{c: %a@ s: %a}@]" C.pp
+        (I32 v.concrete) S.pp (I32 v.symbolic)
     | I64 v ->
-      Stdlib.Format.fprintf ppf "@[<hov 1>{c: %a@ s: %a}@]" C.pp (I64 v.concrete) S.pp (I64 v.symbolic)
+      Stdlib.Format.fprintf ppf "@[<hov 1>{c: %a@ s: %a}@]" C.pp
+        (I64 v.concrete) S.pp (I64 v.symbolic)
     | F32 v ->
-      Stdlib.Format.fprintf ppf "@[<hov 1>{c: %a@ s: %a}@]" C.pp (F32 v.concrete) S.pp (F32 v.symbolic)
+      Stdlib.Format.fprintf ppf "@[<hov 1>{c: %a@ s: %a}@]" C.pp
+        (F32 v.concrete) S.pp (F32 v.symbolic)
     | F64 v ->
-      Stdlib.Format.fprintf ppf "@[<hov 1>{c: %a@ s: %a}@]" C.pp (F64 v.concrete) S.pp (F64 v.symbolic)
+      Stdlib.Format.fprintf ppf "@[<hov 1>{c: %a@ s: %a}@]" C.pp
+        (F64 v.concrete) S.pp (F64 v.symbolic)
     | Ref v ->
-      Stdlib.Format.fprintf ppf "@[<hov 1>{c: %a@ s: %a}@]" C.pp (Ref v.concrete) S.pp (Ref v.symbolic)
+      Stdlib.Format.fprintf ppf "@[<hov 1>{c: %a@ s: %a}@]" C.pp
+        (Ref v.concrete) S.pp (Ref v.symbolic)
 
   module Ref = struct
     let equal_func_intf (_ : Func_intf.t) (_ : Func_intf.t) : bool =
