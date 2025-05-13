@@ -2,6 +2,7 @@
 (* Copyright © 2021-2024 OCamlPro *)
 (* Written by the Owi programmers *)
 
+open Owi
 open Syntax
 
 (** Utility function to handle writing to a file or printing to stdout *)

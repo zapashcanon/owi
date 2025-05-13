@@ -27,4 +27,4 @@ val cmd :
   -> out_file:Fpath.t option
   -> model_out_file:Fpath.t option
   -> with_breadcrumbs:bool
-  -> unit Result.t
+  -> unit Owi.Result.t

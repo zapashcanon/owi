@@ -3,4 +3,7 @@
 (* Written by the Owi programmers *)
 
 val cmd :
-  unsafe:bool -> source_file:Fpath.t -> out_file:Fpath.t option -> unit Result.t
+     unsafe:bool
+  -> source_file:Fpath.t
+  -> out_file:Fpath.t option
+  -> unit Owi.Result.t

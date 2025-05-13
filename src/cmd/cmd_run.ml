@@ -2,6 +2,7 @@
 (* Copyright © 2021-2024 OCamlPro *)
 (* Written by the Owi programmers *)
 
+open Owi
 open Syntax
 
 let extern_module : Concrete_extern_func.extern_func Link.extern_module =

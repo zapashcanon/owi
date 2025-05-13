@@ -7,4 +7,4 @@ val cmd :
   -> rac:bool
   -> optimize:bool
   -> files:Fpath.t list
-  -> unit Result.t
+  -> unit Owi.Result.t

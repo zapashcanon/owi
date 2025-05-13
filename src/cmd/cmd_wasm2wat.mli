@@ -6,4 +6,4 @@ val cmd :
      source_file:Fpath.t
   -> emit_file:bool
   -> out_file:Fpath.t option
-  -> unit Result.t
+  -> unit Owi.Result.t

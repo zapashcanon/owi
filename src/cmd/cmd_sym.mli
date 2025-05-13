@@ -8,8 +8,8 @@ type fail_mode =
   | Both
 
 val link_symbolic_modules :
-     Symbolic.Extern_func.extern_func Link.state
-  -> Symbolic.Extern_func.extern_func Link.state
+     Owi.Symbolic.Extern_func.extern_func Owi.Link.state
+  -> Owi.Symbolic.Extern_func.extern_func Owi.Link.state
 
 val handle_result :
      workers:int
@@ -23,8 +23,8 @@ val handle_result :
   -> model_format:Cmd_utils.model_format
   -> model_out_file:Fpath.t option
   -> with_breadcrumbs:bool
-  -> unit Symbolic.Choice.t
-  -> unit Result.t
+  -> unit Owi.Symbolic.Choice.t
+  -> unit Owi.Result.t
 
 val cmd :
      unsafe:bool
@@ -45,4 +45,4 @@ val cmd :
   -> invoke_with_symbols:bool
   -> model_out_file:Fpath.t option
   -> with_breadcrumbs:bool
-  -> unit Result.t
+  -> unit Owi.Result.t

@@ -4,4 +4,4 @@
 
 val owi_version : unit -> string
 
-val cmd : unit -> unit Result.t
+val cmd : unit -> unit Owi.Result.t

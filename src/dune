@@ -12,24 +12,6 @@
   binary_types
   binary_validate
   choice_intf
-  cmd_utils
-  cmd_c
-  cmd_cpp
-  cmd_fmt
-  cmd_instrument
-  cmd_iso
-  cmd_opt
-  cmd_replay
-  cmd_run
-  cmd_rust
-  cmd_script
-  cmd_sym
-  cmd_conc
-  cmd_validate
-  cmd_version
-  cmd_wasm2wat
-  cmd_wat2wasm
-  cmd_zig
   code_generator
   compile
   concolic
@@ -118,7 +100,6 @@
   text_parser
   wutf8)
  (libraries
-  bos
   digestif
   dune-build-info
   dune-site
@@ -133,12 +114,10 @@
   logs.fmt
   menhirLib
   ocaml_intrinsics
-  ppxlib
   prelude
   processor
   sedlex
   uutf
-  runtime_events
   xmlm)
  (flags
   (:standard -open Prelude))

@@ -2,6 +2,7 @@
 (* Copyright © 2021-2024 OCamlPro *)
 (* Written by the Owi programmers *)
 
+open Owi
 open Syntax
 
 let cmd_one ~unsafe ~optimize ~out_file ~source_file =

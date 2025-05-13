@@ -7,4 +7,4 @@ val cmd :
   -> optimize:bool
   -> out_file:Fpath.t option
   -> source_file:Fpath.t
-  -> unit Result.t
+  -> unit Owi.Result.t

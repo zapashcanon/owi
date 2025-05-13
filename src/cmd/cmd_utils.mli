@@ -8,22 +8,22 @@ type model_format =
   | Json
 
 (* test-case stuff *)
-val write_testcase : dir:Fpath.t -> Smtml.Value.t list -> unit Result.t
+val write_testcase : dir:Fpath.t -> Smtml.Value.t list -> unit Owi.Result.t
 
 (* harness stuff *)
 val set_entry_point :
      string option
   -> bool
-  -> Binary.Module.t
-  -> (Binary.Module.t, [> `Msg of string ]) result
+  -> Owi.Binary.Module.t
+  -> (Owi.Binary.Module.t, [> `Msg of string ]) result
 
 (* installed files *)
 val c_files_location : Fpath.t list
 
 val zig_files_location : Fpath.t list
 
-val find_installed_c_file : Fpath.t -> Fpath.t Result.t
+val find_installed_c_file : Fpath.t -> Fpath.t Owi.Result.t
 
-val find_installed_rust_file : Fpath.t -> Fpath.t Result.t
+val find_installed_rust_file : Fpath.t -> Fpath.t Owi.Result.t
 
-val find_installed_zig_file : Fpath.t -> Fpath.t Result.t
+val find_installed_zig_file : Fpath.t -> Fpath.t Owi.Result.t

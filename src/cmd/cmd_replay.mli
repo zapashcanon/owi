@@ -9,4 +9,4 @@ val cmd :
   -> source_file:Fpath.t
   -> entry_point:string option
   -> invoke_with_symbols:bool
-  -> unit Result.t
+  -> unit Owi.Result.t

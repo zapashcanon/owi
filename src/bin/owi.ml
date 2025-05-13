@@ -40,12 +40,12 @@ let solver_conv = Arg.conv (Smtml.Solver_type.of_string, Smtml.Solver_type.pp)
 let model_format_conv =
   let of_string s =
     match String.lowercase_ascii s with
-    | "scfg" -> Ok Cmd_utils.Scfg
+    | "scfg" -> Ok Owi_cmd.Cmd_utils.Scfg
     | "json" -> Ok Json
     | _ -> Fmt.error_msg {|Expected "json" or "scfg" but got "%s"|} s
   in
   let pp fmt = function
-    | Cmd_utils.Scfg -> Fmt.string fmt "scfg"
+    | Owi_cmd.Cmd_utils.Scfg -> Fmt.string fmt "scfg"
     | Json -> Fmt.string fmt "json"
   in
   Arg.conv (of_string, pp)
@@ -58,7 +58,7 @@ let sdocs = Manpage.s_common_options
 
 let shared_man = [ `S Manpage.s_bugs; `P "Email them to <contact@ndrs.fr>." ]
 
-let version = Cmd_version.owi_version ()
+let version = Owi_cmd.Cmd_version.owi_version ()
 
 (* Common terms *)
 
@@ -91,7 +91,7 @@ let fail_mode =
   let assert_doc = "ignore traps and only report assertion violations" in
   Arg.(
     value
-    & vflag Cmd_sym.Both
+    & vflag Owi_cmd.Cmd_sym.Both
         [ (Trap_only, info [ "fail-on-trap-only" ] ~doc:trap_doc)
         ; (Assertion_only, info [ "fail-on-assertion-only" ] ~doc:assert_doc)
         ] )
@@ -248,8 +248,8 @@ let c_cmd =
   and+ model_out_file
   and+ with_breadcrumbs
   and+ entry_point in
-  Cmd_c.cmd ~arch ~property ~testcomp ~workspace ~workers ~opt_lvl ~includes
-    ~files ~unsafe ~optimize ~no_stop_at_failure ~no_value
+  Owi_cmd.Cmd_c.cmd ~arch ~property ~testcomp ~workspace ~workers ~opt_lvl
+    ~includes ~files ~unsafe ~optimize ~no_stop_at_failure ~no_value
     ~no_assert_failure_expression_printing ~deterministic_result_order
     ~fail_mode ~concolic ~eacsl ~solver ~model_format ~entry_point
     ~invoke_with_symbols ~out_file ~model_out_file ~with_breadcrumbs
@@ -285,7 +285,7 @@ let cpp_cmd =
   and+ model_out_file
   and+ with_breadcrumbs
   and+ entry_point in
-  Cmd_cpp.cmd ~arch ~workers ~opt_lvl ~includes ~files ~unsafe ~optimize
+  Owi_cmd.Cmd_cpp.cmd ~arch ~workers ~opt_lvl ~includes ~files ~unsafe ~optimize
     ~no_stop_at_failure ~no_value ~no_assert_failure_expression_printing
     ~deterministic_result_order ~fail_mode ~concolic ~solver ~model_format
     ~entry_point ~invoke_with_symbols ~out_file ~workspace ~model_out_file
@@ -318,7 +318,7 @@ let conc_cmd =
   and+ invoke_with_symbols
   and+ with_breadcrumbs
   and+ entry_point in
-  Cmd_conc.cmd ~unsafe ~rac ~srac ~optimize ~workers ~no_stop_at_failure
+  Owi_cmd.Cmd_conc.cmd ~unsafe ~rac ~srac ~optimize ~workers ~no_stop_at_failure
     ~no_value ~no_assert_failure_expression_printing ~deterministic_result_order
     ~fail_mode ~workspace ~solver ~files ~model_format ~entry_point
     ~invoke_with_symbols ~model_out_file ~with_breadcrumbs
@@ -336,7 +336,7 @@ let fmt_cmd =
     Arg.(value & flag & info [ "inplace"; "i" ] ~doc)
   and+ files
   and+ () = setup_log in
-  Cmd_fmt.cmd ~inplace ~files
+  Owi_cmd.Cmd_fmt.cmd ~inplace ~files
 
 (* owi instrument *)
 
@@ -357,7 +357,7 @@ let instrument_cmd =
     Arg.(value & flag & info [ "symbolic" ] ~doc)
   and+ () = setup_log
   and+ files in
-  Cmd_instrument.cmd ~unsafe ~symbolic ~files
+  Owi_cmd.Cmd_instrument.cmd ~unsafe ~symbolic ~files
 
 (* owi iso *)
 
@@ -385,9 +385,10 @@ let iso_cmd =
   and+ with_breadcrumbs
   and+ workspace in
 
-  Cmd_iso.cmd ~deterministic_result_order ~fail_mode ~files ~model_format
-    ~no_assert_failure_expression_printing ~no_stop_at_failure ~no_value ~solver
-    ~unsafe ~workers ~workspace ~model_out_file ~with_breadcrumbs
+  Owi_cmd.Cmd_iso.cmd ~deterministic_result_order ~fail_mode ~files
+    ~model_format ~no_assert_failure_expression_printing ~no_stop_at_failure
+    ~no_value ~solver ~unsafe ~workers ~workspace ~model_out_file
+    ~with_breadcrumbs
 
 (* owi opt *)
 
@@ -401,7 +402,7 @@ let opt_cmd =
   and+ () = setup_log
   and+ source_file
   and+ out_file in
-  Cmd_opt.cmd ~unsafe ~source_file ~out_file
+  Owi_cmd.Cmd_opt.cmd ~unsafe ~source_file ~out_file
 
 (* owi replay *)
 
@@ -426,8 +427,8 @@ let replay_cmd =
   and+ source_file
   and+ invoke_with_symbols
   and+ entry_point in
-  Cmd_replay.cmd ~unsafe ~optimize ~replay_file ~source_file ~entry_point
-    ~invoke_with_symbols
+  Owi_cmd.Cmd_replay.cmd ~unsafe ~optimize ~replay_file ~source_file
+    ~entry_point ~invoke_with_symbols
 
 (* owi run *)
 
@@ -442,7 +443,7 @@ let run_cmd =
   and+ optimize
   and+ () = setup_log
   and+ files in
-  Cmd_run.cmd ~unsafe ~rac ~optimize ~files
+  Owi_cmd.Cmd_run.cmd ~unsafe ~rac ~optimize ~files
 
 (* owi rust *)
 
@@ -476,11 +477,11 @@ let rust_cmd =
   and+ model_out_file
   and+ with_breadcrumbs
   and+ entry_point in
-  Cmd_rust.cmd ~arch ~workers ~opt_lvl ~includes ~files ~unsafe ~optimize
-    ~no_stop_at_failure ~no_value ~no_assert_failure_expression_printing
-    ~deterministic_result_order ~fail_mode ~concolic ~solver ~model_format
-    ~entry_point ~invoke_with_symbols ~out_file ~workspace ~model_out_file
-    ~with_breadcrumbs
+  Owi_cmd.Cmd_rust.cmd ~arch ~workers ~opt_lvl ~includes ~files ~unsafe
+    ~optimize ~no_stop_at_failure ~no_value
+    ~no_assert_failure_expression_printing ~deterministic_result_order
+    ~fail_mode ~concolic ~solver ~model_format ~entry_point ~invoke_with_symbols
+    ~out_file ~workspace ~model_out_file ~with_breadcrumbs
 
 (* owi script *)
 
@@ -497,7 +498,7 @@ let script_cmd =
     let doc = "no exhaustion tests" in
     Arg.(value & flag & info [ "no-exhaustion" ] ~doc)
   in
-  Cmd_script.cmd ~optimize ~files ~no_exhaustion
+  Owi_cmd.Cmd_script.cmd ~optimize ~files ~no_exhaustion
 
 (* owi sym *)
 
@@ -526,7 +527,7 @@ let sym_cmd =
   and+ model_out_file
   and+ with_breadcrumbs
   and+ invoke_with_symbols in
-  Cmd_sym.cmd ~unsafe ~rac ~srac ~optimize ~workers ~no_stop_at_failure
+  Owi_cmd.Cmd_sym.cmd ~unsafe ~rac ~srac ~optimize ~workers ~no_stop_at_failure
     ~no_value ~no_assert_failure_expression_printing ~deterministic_result_order
     ~fail_mode ~workspace ~solver ~files ~model_format ~entry_point
     ~invoke_with_symbols ~model_out_file ~with_breadcrumbs
@@ -541,7 +542,7 @@ let validate_info =
 let validate_cmd =
   let+ files
   and+ () = setup_log in
-  Cmd_validate.cmd ~files
+  Owi_cmd.Cmd_validate.cmd ~files
 
 (* owi version *)
 
@@ -553,7 +554,7 @@ let version_info =
 let version_cmd =
   let+ () = Term.const ()
   and+ () = setup_log in
-  Cmd_version.cmd ()
+  Owi_cmd.Cmd_version.cmd ()
 
 (* owi wasm2wat *)
 
@@ -571,7 +572,7 @@ let wasm2wat_cmd =
     Arg.(value & flag & info [ "emit-file" ] ~doc)
   and+ () = setup_log
   and+ out_file in
-  Cmd_wasm2wat.cmd ~source_file ~emit_file ~out_file
+  Owi_cmd.Cmd_wasm2wat.cmd ~source_file ~emit_file ~out_file
 
 (* owi wat2wasm *)
 
@@ -588,7 +589,7 @@ let wat2wasm_cmd =
   and+ out_file
   and+ () = setup_log
   and+ source_file in
-  Cmd_wat2wasm.cmd ~unsafe ~optimize ~out_file ~source_file
+  Owi_cmd.Cmd_wat2wasm.cmd ~unsafe ~optimize ~out_file ~source_file
 
 (* owi zig *)
 
@@ -620,10 +621,11 @@ let zig_cmd =
   and+ () = setup_log
   and+ with_breadcrumbs
   and+ entry_point in
-  Cmd_zig.cmd ~includes ~workers ~files ~unsafe ~optimize ~no_stop_at_failure
-    ~no_value ~no_assert_failure_expression_printing ~deterministic_result_order
-    ~fail_mode ~concolic ~solver ~model_format ~entry_point ~invoke_with_symbols
-    ~out_file ~workspace ~model_out_file ~with_breadcrumbs
+  Owi_cmd.Cmd_zig.cmd ~includes ~workers ~files ~unsafe ~optimize
+    ~no_stop_at_failure ~no_value ~no_assert_failure_expression_printing
+    ~deterministic_result_order ~fail_mode ~concolic ~solver ~model_format
+    ~entry_point ~invoke_with_symbols ~out_file ~workspace ~model_out_file
+    ~with_breadcrumbs
 
 (* owi *)
 
