@@ -32,8 +32,9 @@ open Text
 let failwith msg = raise @@ Parse_fail msg
 
 let u32 s =
-  try Unsigned.UInt32.to_int (Unsigned.UInt32.of_string s)
-  with Failure msg -> Fmt.kstr failwith "constant out of range %s (%s)" s msg
+  match Option.bind (Int32.of_string s) Int32.unsigned_to_int with
+  | Some v -> v
+  | None -> Fmt.kstr failwith "constant out of range %s" s
 
 let i32 s =
   try Int32.of_string_exn s

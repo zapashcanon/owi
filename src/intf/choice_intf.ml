@@ -22,8 +22,6 @@ module type Base = sig
   val ( let* ) : 'a t -> ('a -> 'b t) -> 'b t
 
   val ( let+ ) : 'a t -> ('a -> 'b) -> 'b t
-
-  val get_pc : unit -> Smtml.Expr.Set.t t
 end
 
 module type Complete = sig
@@ -34,14 +32,4 @@ module type Complete = sig
   type 'a run_result
 
   val assertion : V.bool -> unit t
-
-  val with_thread : (thread -> 'b) -> 'b t
-
-  val solver : Solver.t t
-
-  val thread : thread t
-
-  val add_pc : V.bool -> unit t
-
-  val lift_mem : 'a Symbolic_choice_without_memory.t -> 'a t
 end

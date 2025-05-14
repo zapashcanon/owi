@@ -6,7 +6,6 @@
   annot
   assigned
   binary
-  binary_encoder
   binary_parser
   binary_to_text
   binary_types
@@ -14,12 +13,6 @@
   choice_intf
   code_generator
   compile
-  concolic
-  concolic_choice
-  concolic_extern_func
-  concolic_memory
-  concolic_value
-  concolic_wasm_ffi
   concrete
   concrete_choice
   concrete_extern_func
@@ -45,8 +38,6 @@
   spec
   link
   link_env
-  minimalist_symbolic
-  minimalist_symbolic_choice
   named
   optimize
   parse
@@ -56,41 +47,19 @@
   script
   sexp
   share
-  solver
-  symbolic
-  symbolic_choice
-  symbolic_choice_intf
-  symbolic_choice_with_memory
-  symbolic_choice_without_memory
-  symbolic_functor
-  symbolic_global
-  symbolic_memory
-  symbolic_memory_concretizing
-  symbolic_memory_intf
-  symbolic_memory_make
-  symbolic_path_condition
-  symbolic_table
-  symbolic_value
-  symbolic_wasm_ffi
   spectest
   stack
   string_map
   syntax
-  synchronizer
   text
   text_lexer
   text_parser
   text_validate
-  thread
-  thread_intf
-  thread_with_memory
-  thread_without_memory
   types
   union_find
   value_intf
   v
   wasm_ffi_intf
-  wq
   wutf8)
  (private_modules
   binary_parser
@@ -100,34 +69,23 @@
   text_parser
   wutf8)
  (libraries
+  prelude
   digestif
   dune-build-info
   dune-site
   fmt
-  fmt.cli
-  fmt.tty
-  smtml
   hc
-  integers
   logs
-  logs.cli
-  logs.fmt
   menhirLib
-  ocaml_intrinsics
-  prelude
-  processor
+  logs.fmt
   sedlex
   uutf
+  fpath
+  cmdliner
   xmlm)
- (flags
-  (:standard -open Prelude))
+ (flags (:standard -open Prelude))
  (preprocess
-  (pps sedlex.ppx))
- (instrumentation
-  (backend bisect_ppx --exclusions src/bisect.exclude)
-  (deps bisect.exclude))
- (instrumentation
-  (backend landmarks --auto)))
+  (pps sedlex.ppx)))
 
 (env
  (_

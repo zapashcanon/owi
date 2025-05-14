@@ -12,9 +12,8 @@
 
 include Prelude.Int64
 
-let clz n = of_int (Ocaml_intrinsics.Int64.count_leading_zeros n)
-
-let ctz n = of_int (Ocaml_intrinsics.Int64.count_trailing_zeros n)
+let clz _ = assert false
+let ctz _ = assert false
 
 (* Taken from Base *)
 let popcnt =

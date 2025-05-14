@@ -1236,8 +1236,5 @@ let from_channel chan =
   let content = In_channel.input_all chan in
   from_string content
 
-let from_file (filename : Fpath.t) =
-  let* res =
-    Bos.OS.File.with_ic filename (fun chan () -> from_channel chan) ()
-  in
-  res
+let from_file (_filename : Fpath.t) =
+  assert false

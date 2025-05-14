@@ -782,15 +782,6 @@ module Make (P : Interpret_intf.P) :
     Logs.info (fun m -> m "stack         : [ %a ]" Stack.pp stack);
     Logs.info (fun m ->
       m "running instr : %a" (Types.pp_instr ~short:true) instr );
-    let* () =
-      match Logs.level () with
-      | Some Logs.Debug ->
-        let+ pc = Choice.get_pc () in
-        Logs.debug (fun m ->
-          m "path condition: [ %a ]" Smtml.Expr.pp_list
-            (Smtml.Expr.Set.to_list pc) )
-      | None | Some _ -> return ()
-    in
     match instr with
     | Return -> Choice.return (State.return state)
     | Nop -> Choice.return (State.Continue state)
@@ -1517,6 +1508,3 @@ module Make (P : Interpret_intf.P) :
 end
 
 module Concrete = Make [@inlined hint] (Concrete)
-module Symbolic = Make [@inlined hint] (Symbolic)
-module Minimalist_symbolic = Make [@inlined hint] (Minimalist_symbolic)
-module Concolic = Make [@inlined hint] (Concolic)

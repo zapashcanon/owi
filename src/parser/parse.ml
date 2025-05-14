@@ -349,20 +349,8 @@ struct
         Error (`Unexpected_token tok)
       | Sedlexing.MalFormed -> Error (`Malformed_utf8_encoding "")
 
-  let from_file filename =
-    let open Syntax in
-    let* res =
-      Bos.OS.File.with_ic filename
-        (fun chan () ->
-          let lb = Sedlexing.Utf8.from_channel chan in
-          Sedlexing.set_filename lb (Fpath.to_string filename);
-          from_lexbuf lb )
-        ()
-    in
-    res
-
+  let from_file _filename = assert false
   let from_string s = from_lexbuf (Sedlexing.Utf8.from_string s)
-
   let from_channel c = from_lexbuf (Sedlexing.Utf8.from_channel c)
 end
 
