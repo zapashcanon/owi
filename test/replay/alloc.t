@@ -162,7 +162,7 @@
   owi: [INFO] stack         : [ i32.const 8389648 ]
   owi: [INFO] running instr : local.get 0
   owi: [INFO] stack         : [ i32.const 9 ; i32.const 8389648 ]
-  owi: [INFO] running instr : call 1
+  owi: [INFO] running instr : call 0
   owi: [INFO] stack         : [ i32.const 0 ; i32.const 8389632 ]
   owi: [INFO] running instr : i32.store offset=8 align=4
   owi: [INFO] stack         : [  ]
@@ -175,12 +175,12 @@
   owi: [INFO] stack         : [  ]
   owi: [INFO] running instr : local.get 0
   owi: [INFO] stack         : [ i32.const 0 ]
-  owi: [INFO] running instr : call 2
+  owi: [INFO] running instr : call 1
   owi: [INFO] stack         : [ i32.const 0 ]
   owi: [INFO] running instr : drop
   owi: [INFO] stack         : [  ]
   owi: [INFO] running instr : i32.const 0
   owi: [INFO] stack         : [ i32.const 0 ]
-  owi: [INFO] running instr : call 0
+  owi: [INFO] running instr : call 2
   owi: [INFO] scopes : [symbol symbol_0]
   Assertion failure was correctly reached!

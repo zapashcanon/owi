@@ -103,8 +103,11 @@ let compile ~workspace ~entry_point ~includes ~opt_lvl ~out_file
 
   let out = Option.value ~default:Fpath.(workspace / "a.out.wasm") out_file in
   let* libc = Cmd_utils.find_installed_c_file (Fpath.v "libc.wasm") in
+  let* libowi = Cmd_utils.find_installed_c_file (Fpath.v "libowi.wasm") in
 
-  let files = Cmd.of_list (List.map Fpath.to_string (libc :: files)) in
+  let files =
+    Cmd.of_list (List.map Fpath.to_string (libc :: libowi :: files))
+  in
   let clang : Cmd.t = Cmd.(clang_bin %% flags % "-o" % p out %% files) in
 
   let+ () =
