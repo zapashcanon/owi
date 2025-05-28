@@ -7,60 +7,63 @@ _Bool __VERIFIER_nondet_bool(void) {
 }
 
 char __VERIFIER_nondet_char(void) {
-  // TODO: could be better!
-  return (char)owi_i32();
+  return owi_char();
 }
 
 unsigned char __VERIFIER_nondet_uchar(void) {
-  // TODO: could be better!
-  return (unsigned char)owi_i32();
+  return owi_unsigned_char();
 }
 
 short __VERIFIER_nondet_short(void) {
-  // TODO: could be better!
-  return (short)owi_i32();
+  return owi_short();
 }
 
 unsigned short __VERIFIER_nondet_ushort(void) {
-  // TODO: could be better!
-  return (unsigned short)owi_i32();
+  return owi_unsigned_short();
 }
 
-int __VERIFIER_nondet_int(void) { return owi_i32(); }
+int __VERIFIER_nondet_int(void) {
+  return owi_int();
+}
 
-unsigned int __VERIFIER_nondet_uint(void) { return (unsigned int)owi_i32(); }
+unsigned int __VERIFIER_nondet_uint(void) {
+  return owi_unsigned_int();
+}
 
 __int128 __VERIFIER_nondet_int128(void) {
-  // TODO: looks wrong!
-  return owi_i32();
+  // TODO
+  return (__int128) owi_long_long();
 }
 
 unsigned __int128 __VERIFIER_nondet_uint128(void) {
-  // TODO: looks wrong!
-  return (unsigned __int128)owi_i32();
+  // TODO
+  return (unsigned __int128) owi_long_long();
 }
 
 unsigned int __VERIFIER_nondet_charp(void) {
-  // TODO: could be better!
-  return (unsigned int)owi_i32();
+  return owi_unsigned_long();
 }
 
 long __VERIFIER_nondet_long(void) {
-  // TODO: looks wrong! shouldn't it be 64?
-  return (long)owi_i32();
+  return owi_long();
 }
 
 unsigned long __VERIFIER_nondet_ulong(void) {
-  // TODO: looks wrong!
-  return (unsigned long)owi_i32();
+  return owi_unsigned_long();
 }
 
-long long __VERIFIER_nondet_longlong(void) { return owi_i64(); }
+long long __VERIFIER_nondet_longlong(void) {
+  return owi_long_long();
+}
 
 unsigned long long __VERIFIER_nondet_ulonglong(void) {
-  return (unsigned long long)owi_i64();
+  return owi_unsigned_long_long();
 }
 
-float __VERIFIER_nondet_float(void) { return owi_f32(); }
+float __VERIFIER_nondet_float(void) {
+  return owi_float();
+}
 
-double __VERIFIER_nondet_double(void) { return owi_f64(); }
+double __VERIFIER_nondet_double(void) {
+  return owi_double();
+}

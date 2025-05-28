@@ -13,17 +13,17 @@ unsigned char *make_in(size_t size) {
   unsigned char *t = malloc(size);
   switch (size) {
   case 8:
-    *t = owi_i8();
+    *t = owi_int8();
     break;
   case 32:
-    *t = owi_i32();
+    *t = owi_int32();
     break;
   case 64:
-    *t = owi_i64();
+    *t = owi_int64();
     break;
   default:
     for (int i = 0; i < (size / sizeof(char)); i++) {
-      t[i] = owi_i8();
+      t[i] = owi_int8();
     }
     break;
   }
@@ -48,7 +48,7 @@ int klee_range(int begin, int end, const char *name) {
 }
 int klee_int(const char *name) {
   owi_open_scope(name);
-  int i = owi_i32();
+  int i = owi_int32();
   owi_close_scope();
   return i;
 }

@@ -1,33 +1,30 @@
 #ifndef _OWI_H
 #define _OWI_H
 
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-__attribute__((import_module("summaries"), import_name("alloc"))) void *owi_malloc(void *, unsigned int);
+__attribute__((import_module("symbolic"), import_name("i8_symbol")))   int8_t   owi_int8(void);
+__attribute__((import_module("symbolic"), import_name("i8_symbol")))  uint8_t  owi_uint8(void);
+__attribute__((import_module("symbolic"), import_name("i16_symbol")))  int16_t  owi_int16(void);
+__attribute__((import_module("symbolic"), import_name("i16_symbol"))) uint16_t owi_uint16(void);
+__attribute__((import_module("symbolic"), import_name("i32_symbol")))  int32_t  owi_int32(void);
+__attribute__((import_module("symbolic"), import_name("i32_symbol"))) uint32_t owi_uint32(void);
+__attribute__((import_module("symbolic"), import_name("i64_symbol")))  int64_t  owi_int64(void);
+__attribute__((import_module("symbolic"), import_name("i64_symbol"))) uint64_t owi_uint64(void);
 
-__attribute__((import_module("symbolic"), import_name("i8_symbol"))) char owi_i8(void);
+_Static_assert(sizeof(float) == 4, "Unsupported float size. Please open an issue.");
+__attribute__((import_module("symbolic"), import_name("f32_symbol"))) float owi_float(void);
 
-__attribute__((import_module("symbolic"), import_name("char_symbol"))) char owi_char(void);
+_Static_assert(sizeof(double) == 8, "Unsupported double size. Please open an issue.");
+__attribute__((import_module("symbolic"), import_name("f64_symbol"))) double owi_double(void);
 
-__attribute__((import_module("symbolic"), import_name("i32_symbol"))) int owi_i32(void);
-
-__attribute__((import_module("symbolic"), import_name("i64_symbol"))) long long owi_i64(void);
-
-__attribute__((import_module("symbolic"), import_name("f32_symbol"))) float owi_f32(void);
-
-__attribute__((import_module("symbolic"), import_name("f64_symbol"))) double owi_f64(void);
-
-__attribute__((import_module("symbolic"), import_name("range_symbol"))) int owi_range(int lo, int hi);
-
-__attribute__((import_module("symbolic"), import_name("print_char"))) void owi_print_char(int);
-
-__attribute__((import_module("symbolic"), import_name("cov_label_is_covered"))) void owi_label_is_covered(int id);
-
-__attribute__((import_module("symbolic"), import_name("cov_label_set"))) void owi_label_set(int id, char * name);
+// TODO
+// long double owi_long_double(void);
 
 __attribute__((import_module("symbolic"), import_name("bool_symbol")))
 #ifdef __cplusplus
@@ -36,6 +33,29 @@ __attribute__((import_module("symbolic"), import_name("bool_symbol")))
   _Bool
 #endif
 owi_bool(void);
+
+char owi_char(void);
+unsigned char owi_unsigned_char(void);
+short owi_short(void);
+unsigned short owi_unsigned_short(void);
+int owi_int(void);
+unsigned int owi_unsigned_int(void);
+long owi_long(void);
+unsigned long owi_unsigned_long(void);
+long long owi_long_long(void);
+unsigned long long owi_unsigned_long_long(void);
+
+// TODO: improve this
+__attribute__((import_module("symbolic"), import_name("range_symbol"))) int owi_range(int lo, int hi);
+
+
+
+__attribute__((import_module("summaries"), import_name("alloc"))) void *owi_malloc(void *, unsigned int);
+__attribute__((import_module("symbolic"), import_name("print_char"))) void owi_print_char(int);
+
+__attribute__((import_module("symbolic"), import_name("cov_label_is_covered"))) void owi_label_is_covered(int id);
+
+__attribute__((import_module("symbolic"), import_name("cov_label_set"))) void owi_label_set(int id, char * name);
 
 #ifdef __OWI_INTERNALS
 
